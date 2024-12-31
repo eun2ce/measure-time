@@ -4,27 +4,20 @@ import java.lang.reflect.Method;
 
 public class MeasureTimeProcessor {
 
+  /**
+   * 모든 메서드를 실행하면서 @MeasureTime 애노테이션이 붙은 메서드의 실행 시간을 출력합니다.
+   */
   public static void process(Class<?> clazz) {
-    Method[] methods = clazz.getDeclaredMethods();
-
-    for (Method method : methods) {
+    for (Method method : clazz.getDeclaredMethods()) {
       if (method.isAnnotationPresent(MeasureTime.class)) {
-        if (!java.lang.reflect.Modifier.isStatic(method.getModifiers())) {
-          System.err.println("Skipping non-static method: " + method.getName());
-          continue;
-        }
-
         try {
-          System.out.println("Measuring method: " + method.getName());
           long startTime = System.nanoTime();
           method.setAccessible(true);
-          method.invoke(null); // Static method execution
+          method.invoke(null);  // static 메서드 호출
           long endTime = System.nanoTime();
-
           double executionTimeMs = (endTime - startTime) / 1_000_000.0;
           System.out.println(method.getName() + " executed in " + executionTimeMs + " ms");
         } catch (Exception e) {
-          System.err.println("Failed to execute method: " + method.getName());
           e.printStackTrace();
         }
       }
