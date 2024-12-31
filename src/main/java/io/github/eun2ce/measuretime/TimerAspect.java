@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 @Aspect
 @Component
 public class TimerAspect {
-  @Around("@annotation(measuretime.MeasureTime)")
+  @Around("@annotation(io.github.eun2ce.measuretime.MeasureTime)")
   public Object measureExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
     long start = System.nanoTime();
     Object result = joinPoint.proceed();
