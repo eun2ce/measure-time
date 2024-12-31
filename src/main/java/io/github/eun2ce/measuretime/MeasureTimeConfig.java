@@ -9,7 +9,7 @@ import org.springframework.context.annotation.EnableAspectJAutoProxy;
 public class MeasureTimeConfig {
 
   @Bean
-  public MeasureTimeAspect measureTimeAspect() {
-    return new MeasureTimeAspect();
+  public MeasureTimerAspect measureTimeAspect() {
+    return new MeasureTimerAspect();
   }
 }
