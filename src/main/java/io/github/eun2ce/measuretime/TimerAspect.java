@@ -1,4 +1,4 @@
-package measuretime;
+package io.github.eun2ce.measuretime;
 
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;

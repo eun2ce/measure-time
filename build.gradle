@@ -1,10 +1,13 @@
+import com.vanniktech.maven.publish.SonatypeHost
+
 plugins {
     id 'java'
-    id 'maven-publish'
+    id 'com.vanniktech.maven.publish' version '0.30.0'
+    id 'signing'
 }
 
 group = 'io.github.eun2ce'
-version = '0.1.0'
+version = '0.0.2'
 
 repositories {
     mavenCentral()
@@ -19,27 +22,41 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-params:5.8.2'
 }
 
-test {
-    useJUnitPlatform() // JUnit 5 테스트 플랫폼 사용
+tasks.named('test') {
+    useJUnitPlatform()
 }
 
-publishing {
-    repositories {
-        maven {
-            name = "GitHubPackages"
-            url = uri("https://maven.pkg.github.com/eun2ce/measure-time")
-            credentials {
-                username = project.findProperty("gpr.user") ?: System.getenv("GITHUB_ACTOR")
-                password = project.findProperty("gpr.token") ?: System.getenv("GITHUB_TOKEN")
+mavenPublishing {
+    publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
+    signAllPublications()
+
+    coordinates('io.github.eun2ce', 'measure-time', '0.0.2')
+
+
+    pom {
+        name = 'measure-time'
+        description = 'measure-time is a Java library for measuring method execution time using the @MeasureTime annotation, simplifying performance monitoring.'
+        url = '<https://github.com/eun2ce/measure-time>'
+
+        licenses {
+            license {
+                name = 'Apache License'
+                url = '<https://github.com/eun2ce/measure-time/LICENSE>'
             }
         }
-    }
-    publications {
-        gpr(MavenPublication) {
-            groupId = 'io.github.eun2ce'
-            artifactId = 'measure-time'
-            version = '0.1.0'
-            from(components.java)
+
+        developers {
+            developer {
+                id = 'eun2ce'
+                name = 'eunice.jo'
+                email = 'joeun2ce@gmail.com'
+            }
+        }
+
+        scm {
+            connection = 'scm:git:github.com/eun2ce/measure-time.git'
+            developerConnection = 'scm:git:ssh://github.com:eun2ce/measure-time.git'
+            url = '<https://github.com/eun2ce/measure-time>'
         }
     }
 }

@@ -1,5 +1,5 @@
+package io.github.eun2ce.measuretime;
 
-import measuretime.MeasureTime;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 

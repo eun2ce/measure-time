@@ -1,4 +1,4 @@
-package measuretime;
+package io.github.eun2ce.measuretime;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
