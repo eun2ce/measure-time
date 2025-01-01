@@ -8,7 +8,6 @@ import java.lang.annotation.Target;
 /**
  * Annotation to measure execution time of method.
  */
-@Retention(RetentionPolicy.RUNTIME)
+@Retention(RetentionPolicy.CLASS)
 @Target(ElementType.METHOD)
-public @interface MeasureTime {
-}
+public @interface MeasureTime {}

@@ -7,22 +7,21 @@ plugins {
 }
 
 group = 'io.github.eun2ce'
-version = '0.1.0'
+version = '0.1.1'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation 'org.springframework:spring-context:6.1.14'
-    implementation 'org.aspectj:aspectjweaver:1.9.9.1'
+    implementation 'com.squareup:javapoet:1.13.0'
 }
 
 mavenPublishing {
     publishToMavenCentral(SonatypeHost.CENTRAL_PORTAL)
     signAllPublications()
 
-    coordinates('io.github.eun2ce', 'measure-time', '0.1.0')
+    coordinates('io.github.eun2ce', 'measure-time', '0.1.1')
 
 
     pom {

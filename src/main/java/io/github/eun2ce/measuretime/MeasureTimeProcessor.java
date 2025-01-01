@@ -1,26 +1,58 @@
 package io.github.eun2ce.measuretime;
 
-import java.lang.reflect.Method;
+import com.squareup.javapoet.JavaFile;
+import com.squareup.javapoet.MethodSpec;
+import com.squareup.javapoet.TypeSpec;
+import java.io.IOException;
+import java.util.Set;
+import javax.annotation.processing.AbstractProcessor;
+import javax.annotation.processing.RoundEnvironment;
+import javax.annotation.processing.SupportedAnnotationTypes;
+import javax.annotation.processing.SupportedSourceVersion;
+import javax.lang.model.SourceVersion;
+import javax.lang.model.element.Element;
+import javax.lang.model.element.ElementKind;
+import javax.lang.model.element.ExecutableElement;
+import javax.lang.model.element.Modifier;
+import javax.lang.model.element.TypeElement;
 
-public class MeasureTimeProcessor {
+@SupportedAnnotationTypes("io.github.eun2ce.measuretime.MeasureTime")
+@SupportedSourceVersion(SourceVersion.RELEASE_8)
+public class MeasureTimeProcessor extends AbstractProcessor {
 
-  /**
-   * 모든 메서드를 실행하면서 @MeasureTime 애노테이션이 붙은 메서드의 실행 시간을 출력합니다.
-   */
-  public static void process(Class<?> clazz) {
-    for (Method method : clazz.getDeclaredMethods()) {
-      if (method.isAnnotationPresent(MeasureTime.class)) {
+  @Override
+  public boolean process(Set<? extends TypeElement> annotations, RoundEnvironment roundEnv) {
+    for (Element element : roundEnv.getElementsAnnotatedWith(MeasureTime.class)) {
+      if (element.getKind() == ElementKind.METHOD) {
+        ExecutableElement methodElement = (ExecutableElement) element;
+        TypeElement classElement = (TypeElement) methodElement.getEnclosingElement();
+
+        String className = classElement.getSimpleName() + "_Generated";
+        String packageName = processingEnv.getElementUtils().getPackageOf(classElement).toString();
+
+        MethodSpec originalMethod = MethodSpec.overriding(methodElement)
+            .addStatement("long start = System.nanoTime()")
+            .addStatement("Object result = $N()", methodElement.getSimpleName())
+            .addStatement("long end = System.nanoTime()")
+            .addStatement("System.out.println($S + (end - start) / 1_000_000.0 + $S)",
+                methodElement.getSimpleName() + " executed in ", " ms")
+            .addStatement("return result")
+            .build();
+
+        TypeSpec generatedClass = TypeSpec.classBuilder(className)
+            .addModifiers(Modifier.PUBLIC)
+            .addMethod(originalMethod)
+            .build();
+
+        JavaFile javaFile = JavaFile.builder(packageName, generatedClass).build();
+
         try {
-          long startTime = System.nanoTime();
-          method.setAccessible(true);
-          method.invoke(null);  // static 메서드 호출
-          long endTime = System.nanoTime();
-          double executionTimeMs = (endTime - startTime) / 1_000_000.0;
-          System.out.println(method.getName() + " executed in " + executionTimeMs + " ms");
-        } catch (Exception e) {
+          javaFile.writeTo(processingEnv.getFiler());
+        } catch (IOException e) {
           e.printStackTrace();
         }
       }
     }
+    return true;
   }
 }
